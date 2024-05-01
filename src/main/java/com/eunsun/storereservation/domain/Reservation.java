@@ -43,10 +43,10 @@ public class Reservation {
     @Column(name = "number_of_people")
     private int numberOfPeople;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // default 'pending'
     private ReservationStatus status;
 
-    @Column(name = "is_visited")
+    @Column(name = "is_visited") // default false
     private boolean visited;
 
     @CreationTimestamp

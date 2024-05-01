@@ -1,5 +1,6 @@
 package com.eunsun.storereservation.domain;
 
+import com.eunsun.storereservation.enums.Authority;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,9 +21,13 @@ public class Customer {
     private Long id;
 
     private String email;
+
     private String password;
     private String name;
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Authority role;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -31,6 +36,5 @@ public class Customer {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 
 }

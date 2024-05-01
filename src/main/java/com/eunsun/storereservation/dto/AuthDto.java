@@ -5,6 +5,12 @@ import lombok.Data;
 public class AuthDto {
 
     @Data
+    public static class login {
+        private String email;
+        private String password;
+    }
+
+    @Data
     public static class signUp {
 
         private String email;
