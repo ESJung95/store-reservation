@@ -1,6 +1,5 @@
 package com.eunsun.storereservation.service;
 
-import com.eunsun.storereservation.domain.Customer;
 import com.eunsun.storereservation.domain.Manager;
 import com.eunsun.storereservation.dto.AuthDto;
 import com.eunsun.storereservation.enums.Authority;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
