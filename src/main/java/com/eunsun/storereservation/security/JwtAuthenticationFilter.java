@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication auth = this.jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            log.info(String.format("{%s} -> %s", this.jwtTokenProvider.getEmail(token), request.getRequestURI()));
+            log.info(String.format("{%s} -> %s", this.jwtTokenProvider.getEmail(token) + ": 토큰 받은 이메일", request.getRequestURI() + "요청한 곳"));
         }
 
         filterChain.doFilter(request, response);

@@ -27,6 +27,11 @@ public class ManagerService {
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 매니저의 이메일을 기반으로 매니저의 ID를 조회하는 메서드
+    public Long findManagerIdByEmail(String email) {
+        return managerRepository.findManagerIdByEmail(email);
+    }
+
     // 로그인 정보 일치 확인
     public Manager authenticateManager(AuthDto.login request) {
         Manager manager = managerRepository.findByEmail(request.getEmail())
@@ -42,9 +47,10 @@ public class ManagerService {
     // 토큰 생성 시 필요한 정보
     public UserDetails loadUserByEmail(String email) {
         Manager manager = managerRepository.findByEmail(email)
-                .orElseThrow(() -> new UserEmailNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다. -> " + email));
+                .orElseThrow(() -> new UserEmailNotFoundException("해당 이메일을 가진 매니저를 찾을 수 없습니다. -> " + email));
+
         // 사용자의 권한 정보를 설정
-        Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(Authority.ROLE_MANAGER.name()));
+        Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(String.valueOf(Authority.ROLE_MANAGER)));
 
         return User.builder()
                 .username(manager.getEmail())
@@ -53,6 +59,7 @@ public class ManagerService {
                 .build();
     }
 
+    // 회원가입
     public String registerManager(AuthDto.signUp request) {
 
         // 가입 이메일 중복 검사
@@ -73,9 +80,10 @@ public class ManagerService {
 
         Manager saveManager = managerRepository.save(manager);
 
-        log.info("매니저의 회원가입 정보를 성공적으로 저장했습니다.");
+        log.info(manager.getName() + "매니저의 회원가입 정보를 성공적으로 저장했습니다.");
         return saveManager.getEmail();
 
     }
+
 
 }

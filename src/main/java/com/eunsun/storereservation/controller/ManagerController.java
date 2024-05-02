@@ -23,12 +23,13 @@ public class ManagerController {
     // 로그인
     @PostMapping("/manager-login")
     public ResponseEntity<String> loginManager(@RequestBody AuthDto.login request) {
-        log.info(request.getEmail() + " -> manager 로그인 요청");
+        log.info(request.getEmail() + " manager -> 로그인 요청");
 
         // 아이디와 패스워드 일치 확인 후 토큰 생성
         var manager = this.managerService.authenticateManager(request);
         var token = this.jwtTokenProvider.generateToken(manager.getEmail(), String.valueOf(manager.getRole()));
 
+        log.info(request.getEmail() + " manager -> 로그인 성공");
         return ResponseEntity.ok(token);
 
     }
