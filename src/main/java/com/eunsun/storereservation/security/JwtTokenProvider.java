@@ -1,6 +1,5 @@
 package com.eunsun.storereservation.security;
 
-import com.eunsun.storereservation.domain.Manager;
 import com.eunsun.storereservation.exception.UserEmailNotFoundException;
 import com.eunsun.storereservation.service.CustomerService;
 import com.eunsun.storereservation.service.ManagerService;
