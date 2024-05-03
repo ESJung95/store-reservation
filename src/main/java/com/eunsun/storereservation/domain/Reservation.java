@@ -2,9 +2,7 @@ package com.eunsun.storereservation.domain;
 
 import com.eunsun.storereservation.enums.ReservationStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,6 +14,8 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Reservation {
 
     @Id
@@ -44,10 +44,10 @@ public class Reservation {
     private int numberOfPeople;
 
     @Enumerated(EnumType.STRING) // default 'pending'
-    private ReservationStatus status;
+    private ReservationStatus status = ReservationStatus.PENDING;
 
     @Column(name = "is_visited") // default false
-    private boolean visited;
+    private boolean visited = false;
 
     @CreationTimestamp
     @Column(name = "created_at")

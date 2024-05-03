@@ -4,7 +4,7 @@ import com.eunsun.storereservation.domain.Manager;
 import com.eunsun.storereservation.domain.Store;
 import com.eunsun.storereservation.dto.StoreDetailDto;
 import com.eunsun.storereservation.dto.StoreDto;
-import com.eunsun.storereservation.exception.ManagerNotFoundException;
+import com.eunsun.storereservation.exception.UserNotFoundException;
 import com.eunsun.storereservation.repository.ManagerRepository;
 import com.eunsun.storereservation.repository.StoreRepository;
 import com.eunsun.storereservation.util.StoreUtils;
@@ -72,9 +72,9 @@ public class StoreService {
 
     // 매장 정보 저장
     @Transactional
-    public StoreDto createStore(StoreDto storeDto, Long loggedInManagerId) {
-        Manager manager = managerRepository.findById(loggedInManagerId)
-                .orElseThrow(() -> new ManagerNotFoundException(loggedInManagerId + "에 해당하는 관리자를 찾을 수 없습니다."));
+    public StoreDto createStore(StoreDto storeDto, Long loginManagerId) {
+        Manager manager = managerRepository.findById(loginManagerId)
+                .orElseThrow(() -> new UserNotFoundException(loginManagerId + "에 해당하는 관리자를 찾을 수 없습니다."));
 
         Store store = Store.builder()
                 .manager(manager)

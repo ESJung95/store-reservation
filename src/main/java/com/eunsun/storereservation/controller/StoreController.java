@@ -57,7 +57,7 @@ public class StoreController {
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> deleteStore(@PathVariable("storeId") Long storeId, Authentication authentication) {
         try {
-            Long loginManagerId = jwtTokenProvider.extractManagerIdFromAuthentication(authentication);
+            Long loginManagerId = jwtTokenProvider.managerIdFromAuthentication(authentication);
             storeService.deleteStore(storeId, loginManagerId);
             log.info(storeId + "번 매장 정보 삭제 성공, 삭제 매니저 아이디 ->" + loginManagerId);
 
@@ -73,7 +73,7 @@ public class StoreController {
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> modifyStoreInfo(@PathVariable("storeId") Long storeId, @RequestBody StoreDto storeDto, Authentication authentication) {
         try {
-            Long loginManagerId = jwtTokenProvider.extractManagerIdFromAuthentication(authentication);
+            Long loginManagerId = jwtTokenProvider.managerIdFromAuthentication(authentication);
             StoreDto updateStoreDto = storeService.modifyStoreInfo(storeId, storeDto, loginManagerId);
             log.info("매장 정보 수정 성공 ->" + updateStoreDto);
 
@@ -94,7 +94,7 @@ public class StoreController {
 
         try {
 
-            Long loginManagerId = jwtTokenProvider.extractManagerIdFromAuthentication(authentication);
+            Long loginManagerId = jwtTokenProvider.managerIdFromAuthentication(authentication);
             StoreDto savedStoreDto = storeService.createStore(storeDto, loginManagerId);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStoreDto);

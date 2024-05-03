@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
@@ -68,20 +70,22 @@ public class JwtTokenProvider {
     }
 
     private UserDetails loadUserByEmail(String email) {
-
         // Manager 조회
-        UserDetails managerDetails = managerService.loadUserByEmail(email);
-        if (managerDetails != null) {
-            return managerDetails;
+        try {
+            return managerService.loadUserByEmail(email);
+        } catch (UserEmailNotFoundException e) {
+            log.warn("Manager DB에서 이메일(아이디)을 가진 사용자를 찾을 수 없습니다 -> " + email);
         }
 
         // Customer 조회
-        UserDetails customerDetails = customerService.loadUserByEmail(email);
-        if (customerDetails != null) {
-            return customerDetails;
+        try {
+            return customerService.loadUserByEmail(email);
+        } catch (UserEmailNotFoundException e) {
+            log.warn("Customer DB에서 이메일(아이디)을 가진 사용자를 찾을 수 없습니다 -> " + email);
         }
 
-        throw new UserEmailNotFoundException(email + " : -> 이메일을 가진 사용자를 찾을 수 없습니다.");
+        // Manager와 Customer 모두 찾을 수 없는 경우
+        throw new UserEmailNotFoundException(email + "에 해당하는 사용자를 찾을 수 없습니다.");
     }
 
 
@@ -109,27 +113,37 @@ public class JwtTokenProvider {
 
 
     // Authentication 객체 -> 로그인한 매니저의 ID
-    public Long extractManagerIdFromAuthentication(Authentication authentication) {
+    public Long managerIdFromAuthentication(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
 
         // UserDetails 추출
         Object principal = authentication.getPrincipal();
-        if (principal instanceof User) {
-            User userDetails = (User) principal;
+        if (principal instanceof User userDetails) {
 
-            String managerEmail = userDetails.getUsername();
             // 매니저의 이메일을 기반으로 매니저의 ID를 조회
-            Long managerId = managerService.findManagerIdByEmail(managerEmail);
-
-            // 매니저의 ID가 존재하면 반환
-            if (managerId != null) {
-                return managerId;
-            }
+            String managerEmail = userDetails.getUsername();
+            return managerService.findManagerIdByEmail(managerEmail);
         }
 
         return null;
+    }
+
+    // 로그인한 customer ID
+    public Long customerIdFromAuthentication(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof User userDetails) {
+
+            String customerEmail = userDetails.getUsername();
+            return customerService.findCustomerIdByEmail(customerEmail);
+        }
+
+        return null;
+
     }
 
 }

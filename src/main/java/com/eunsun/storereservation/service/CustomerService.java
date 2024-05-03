@@ -27,6 +27,12 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 고객 이메일을 기반으로 고객 ID를 조회하는 메서드
+    public Long findCustomerIdByEmail(String email) {
+        return customerRepository.findCustomerIdByEmail(email)
+                .orElseThrow(() -> new UserEmailNotFoundException(email + "에 해당하는 고객을 찾을 수 없습니다."));
+    }
+
     // 로그인 정보 일치 확인
     public Customer authenticateCustomer(AuthDto.login request) {
         Customer customer = customerRepository.findByEmail(request.getEmail())
