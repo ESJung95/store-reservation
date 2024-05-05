@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReservationUtils {
 
-    // reservation Entity -> reservation Create Dto : 예약 정보 저장
+    // reservation Entity -> Reservation With Store Dto : 예약 정보 조회
     public static ReservationWithStoreDto convertToReservationWithStoreDto(Reservation reservation) {
 
         return ReservationWithStoreDto.builder()
@@ -19,6 +19,7 @@ public class ReservationUtils {
                 .reservationDate(reservation.getReservationDate())
                 .reservationTime(reservation.getReservationTime())
                 .numberOfPeople(reservation.getNumberOfPeople())
+                .status(reservation.getStatus())
                 .build();
     }
 

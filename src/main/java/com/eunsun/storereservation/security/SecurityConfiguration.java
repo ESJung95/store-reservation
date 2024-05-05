@@ -33,7 +33,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/customer-signup", "/auth/manager-signup",
                                 "/auth/customer-login", "/auth/manager-login",
-                                "/stores", "/stores/search/{keyword}", "/stores/{keyword}").permitAll()
+                                "/stores", "/stores/search/{keyword}", "/stores/{keyword}",
+                                "/reservations/{reservationId}/visit").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
