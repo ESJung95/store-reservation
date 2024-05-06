@@ -3,6 +3,7 @@ package com.eunsun.storereservation.controller;
 import com.eunsun.storereservation.dto.AuthDto;
 import com.eunsun.storereservation.security.JwtTokenProvider;
 import com.eunsun.storereservation.service.ManagerService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class ManagerController {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 로그인
+    @Operation(summary = "매니저 로그인")
     @PostMapping("/manager-login")
     public ResponseEntity<String> loginManager(@RequestBody AuthDto.login request) {
         log.info(request.getEmail() + " manager -> 로그인 요청");
@@ -35,6 +37,7 @@ public class ManagerController {
     }
 
     // 회원 가입
+    @Operation(summary = "매니저 회원 가입")
     @PostMapping("/manager-signup")
     public ResponseEntity<String> signupManager (@RequestBody AuthDto.signUp request) {
         log.info(request.getName() + "매니저님 회원가입 요청");

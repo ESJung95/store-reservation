@@ -5,6 +5,7 @@ import com.eunsun.storereservation.dto.StoreDto;
 import com.eunsun.storereservation.dto.StoreRatingDto;
 import com.eunsun.storereservation.security.JwtTokenProvider;
 import com.eunsun.storereservation.service.StoreService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class StoreController {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 매장 상세 정보 확인
+    @Operation(summary = "매장 상세 정보 조회")
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreDetailDto> getStoreDetail(@PathVariable("storeId") Long storeId) {
         log.info(storeId + " : 매장 상세 정보 가져오기");
@@ -34,6 +36,7 @@ public class StoreController {
     }
 
     // 매장 목록 조회 - 매장 이름으로 검색
+    @Operation(summary = "매장 이름으로 검색")
     @GetMapping("/search/{keyword}")
     public ResponseEntity<?> searchStores(@PathVariable("keyword") String keyword) {
         log.info("매장 이름으로 검색 ->" + keyword);
@@ -48,6 +51,7 @@ public class StoreController {
     }
 
     // 매장 정보 전체 조회 - 별점 순 나열 (내림차순)
+    @Operation(summary = "높은 리뷰 별점 순으로 매장 전체 정보 조회")
     @GetMapping("/rating")
     public List<StoreRatingDto> getStoresOrderedByRating() {
         log.info("별점 순으로 매장 전체 정보 조회 성공");
@@ -55,6 +59,7 @@ public class StoreController {
     }
 
     // 매장 목록 전체 조회 - 가나다 순으로 정렬
+    @Operation(summary = "가나다순으로 매장 전체 정보 조회")
     @GetMapping("/basic")
     public List<StoreDto> getStores() {
         log.info("가다나순으로 매장 전체 정보 조회 성공");
@@ -62,6 +67,7 @@ public class StoreController {
     }
 
     // 매장 정보 삭제
+    @Operation(summary = "매장 정보 삭제")
     @DeleteMapping("/{storeId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> deleteStore(@PathVariable("storeId") Long storeId, Authentication authentication) {
@@ -78,6 +84,7 @@ public class StoreController {
         }
     }
     // 매장 정보 수정
+    @Operation(summary = "매장 정보 수정")
     @PutMapping("/{storeId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> modifyStoreInfo(@PathVariable("storeId") Long storeId, @RequestBody StoreDto storeDto, Authentication authentication) {
@@ -97,6 +104,7 @@ public class StoreController {
 
 
     // 매장 정보 저장
+    @Operation(summary = "매장 정보 저장")
     @PostMapping("/create")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> saveStoreInfo(@RequestBody StoreDto storeDto, Authentication authentication) {

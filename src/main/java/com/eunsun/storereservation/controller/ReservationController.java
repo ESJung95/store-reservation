@@ -6,6 +6,7 @@ import com.eunsun.storereservation.dto.VisitConfirmationDto;
 import com.eunsun.storereservation.enums.ReservationStatus;
 import com.eunsun.storereservation.security.JwtTokenProvider;
 import com.eunsun.storereservation.service.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ReservationController {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 방문 확인 - 예약 시간 10분 전 + 예약 번호 입력으로 확인
+    @Operation(summary = "매장 방문 확인")
     @PutMapping("/{reservationId}/visit")
     public ResponseEntity<?> confirmVisit(@PathVariable("reservationId") Long reservationId,
                                           @RequestParam("customerName") String customerName) {
@@ -35,6 +37,7 @@ public class ReservationController {
 
 
     // 예약 상태 변경 - 승인, 거절
+    @Operation(summary = "예약 상태 변경")
     @PutMapping("/{reservationId}/status")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<?> updateReservationStatus(@PathVariable("reservationId") Long reservationId,
@@ -51,6 +54,7 @@ public class ReservationController {
 
 
     // 예약 조회 기능 - manager + 자기 가게만 조회 가능
+    @Operation(summary = "매니저용 예약 상세 정보 조회")
     @GetMapping("/manager/{reservationId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ResponseEntity<ReservationWithStoreDto> getReservationDetailForManager(@PathVariable("reservationId") Long reservationId, Authentication authentication) {
@@ -64,6 +68,7 @@ public class ReservationController {
 
 
     // 예약 조회 기능 - customer + 본인 예약만
+    @Operation(summary = "고객용 예약 상세 정보 조회")
     @GetMapping("/customer/{reservationId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ReservationWithStoreDto> getReservationDetail(@PathVariable("reservationId") Long reservationId, Authentication authentication) {
@@ -75,6 +80,7 @@ public class ReservationController {
 
 
     // 예약 생성
+    @Operation(summary = "예약 생성")
     @PostMapping
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<ReservationCreateDto> createReservation(@RequestBody ReservationCreateDto reservationCreateDto, Authentication authentication) {
