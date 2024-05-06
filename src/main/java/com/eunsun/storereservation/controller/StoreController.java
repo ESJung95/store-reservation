@@ -32,7 +32,7 @@ public class StoreController {
         return ResponseEntity.ok(storeDetailDto);
     }
 
-    // 매장 목록 조회 - 매장 이름으로 조회
+    // 매장 목록 조회 - 매장 이름으로 검색
     @GetMapping("/search/{keyword}")
     public ResponseEntity<?> searchStores(@PathVariable("keyword") String keyword) {
         log.info("매장 이름으로 검색 ->" + keyword);
@@ -45,10 +45,13 @@ public class StoreController {
 
         return ResponseEntity.ok(storeDtos);
     }
-    // 매장 목록 조회 - 전체 조회
-    @GetMapping
+
+    // 매장 목록 전체 조회 - 별점 순서로 정렬
+
+    // 매장 목록 전체 조회 - 가나다 순으로 정렬
+    @GetMapping("/basic")
     public List<StoreDto> getStores() {
-        log.info("매장 전체 정보 조회 성공");
+        log.info("가다나순으로 매장 전체 정보 조회 성공");
         return storeService.getAllStores();
     }
 

@@ -31,7 +31,7 @@ public class StoreService {
         return StoreUtils.convertToStoreDetailDto(store);
     }
 
-    // 매장 이름으로 정보 조회
+    // 매장 이름 검색
     public List<StoreDto> searchStoresByName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
            return Collections.emptyList();
@@ -41,10 +41,13 @@ public class StoreService {
         return StoreUtils.convertToDtoList(stores);
     }
 
-    // 매장 정보 조회
+    // 매장 정보 전체 조회 - 가나다순 나열
     public List<StoreDto> getAllStores() {
         List<Store> stores = storeRepository.findAll();
-        return StoreUtils.convertToDtoList(stores);
+        List<StoreDto> storeDto = StoreUtils.convertToDtoList(stores);
+        Collections.sort(storeDto);
+
+        return storeDto;
 
     }
 
