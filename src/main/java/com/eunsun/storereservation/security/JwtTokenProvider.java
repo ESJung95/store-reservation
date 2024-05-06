@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -65,28 +66,47 @@ public class JwtTokenProvider {
 
     // 사용자의 인증 정보
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = loadUserByEmail(this.getEmail(jwt));
+        String email = this.getEmail(jwt);
+        UserDetails userDetails = null;
+
+        try {
+            userDetails = loadManagerByEmail(email);
+            log.info("Manager 인증 정보로 로그인");
+        } catch (UsernameNotFoundException e) {
+            log.warn("Manager 인증 정보를 찾을 수 없습니다. Customer 인증 정보를 확인합니다.");
+        }
+
+        if (userDetails == null) {
+            try {
+                userDetails = loadCustomerByEmail(email);
+                log.info("Customer 인증 정보로 로그인");
+            } catch (UsernameNotFoundException e) {
+                log.warn("Customer 인증 정보를 찾을 수 없습니다.");
+                throw new UsernameNotFoundException("사용자 인증 정보를 찾을 수 없습니다.");
+            }
+        }
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    private UserDetails loadUserByEmail(String email) {
-        // Manager 조회
+    private UserDetails loadManagerByEmail(String email) {
         try {
             return managerService.loadUserByEmail(email);
         } catch (UserEmailNotFoundException e) {
             log.warn("Manager DB에서 이메일(아이디)을 가진 사용자를 찾을 수 없습니다 -> " + email);
+            throw new UsernameNotFoundException("Manager not found with email: " + email);
         }
+    }
 
-        // Customer 조회
+    private UserDetails loadCustomerByEmail(String email) {
         try {
             return customerService.loadUserByEmail(email);
         } catch (UserEmailNotFoundException e) {
             log.warn("Customer DB에서 이메일(아이디)을 가진 사용자를 찾을 수 없습니다 -> " + email);
+            throw new UsernameNotFoundException("Customer not found with email: " + email);
         }
-
-        // Manager와 Customer 모두 찾을 수 없는 경우
-        throw new UserEmailNotFoundException(email + "에 해당하는 사용자를 찾을 수 없습니다.");
     }
+
 
 
     // 토큰 파싱 -> claim 추출
@@ -121,10 +141,11 @@ public class JwtTokenProvider {
         // UserDetails 추출
         Object principal = authentication.getPrincipal();
         if (principal instanceof User userDetails) {
-
-            // 매니저의 이메일을 기반으로 매니저의 ID를 조회
             String managerEmail = userDetails.getUsername();
-            return managerService.findManagerIdByEmail(managerEmail);
+            UserDetails managerDetails = loadManagerByEmail(managerEmail);
+            if (managerDetails != null) {
+                return managerService.findManagerIdByEmail(managerEmail);
+            }
         }
 
         return null;
@@ -137,13 +158,14 @@ public class JwtTokenProvider {
         }
         Object principal = authentication.getPrincipal();
         if (principal instanceof User userDetails) {
-
             String customerEmail = userDetails.getUsername();
-            return customerService.findCustomerIdByEmail(customerEmail);
+            UserDetails customerDetails = loadCustomerByEmail(customerEmail);
+            if (customerDetails != null) {
+                return customerService.findCustomerIdByEmail(customerEmail);
+            }
         }
 
         return null;
-
     }
 
 }
