@@ -5,8 +5,7 @@
 ## ⏱️ 프로젝트 기간 : 2024.04.29 ~ 2024.05.06
 <img width="100%" src="https://github.com/ESJung95/store-reservation/assets/155522048/85b1a7d2-1907-478d-9d2e-a91c90746f73"/>
 
-## DB설계, API설계
-## DB설계, API설계
+## ⏱️ DB설계, API설계
 <a href="https://docs.google.com/spreadsheets/d/1WqCuN-a8rQgcPnOCRhzdt1_pEoKQ6rxFr-slk-FLhqI/edit?usp=sharing" target="_blank"> 전반적인 설계 </a>
 
 ## ⏱️ 주요 기능
@@ -73,7 +72,7 @@
 [Manager 기능]
 예약이 완료된 날짜나 시간은 제한
 
-## 프로젝트 후 느낀점
+## 🫠 프로젝트 후 느낀점
 1. 테스트 코드 작성을 미루지 말자
 2. 예외 처리를 꼼꼼히 하자
 3. 데이터의 관계성에 대해서 깊게 공부하기
