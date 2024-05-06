@@ -21,7 +21,12 @@ public class ManagerController {
     private final ManagerService managerService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 로그인
+    /*
+    Manager 로그인 요청을 처리합니다.
+    1. 클라이언트로부터 전송된 로그인 요청 데이터(이메일, 패스워드)를 받아옵니다.
+    2. 이메일과 패스워드가 일치하면 해당 매니저의 정보로 JWT 토큰을 생성합니다.
+    3. 생성된 JWT 토큰을 반환합니다.
+    */
     @Operation(summary = "매니저 로그인")
     @PostMapping("/manager-login")
     public ResponseEntity<String> loginManager(@RequestBody AuthDto.login request) {
@@ -36,7 +41,12 @@ public class ManagerController {
 
     }
 
-    // 회원 가입
+    /*
+    Manager 회원 가입 요청을 처리합니다.
+    1. 클라이언트로부터 전송된 회원 가입 요청 데이터(이름, 이메일, 패스워드)를 받아옵니다.
+    2. 회원 가입을 처리합니다.
+    3. 회원 가입이 성공하면 생성된 매니저 ID를 반환하고, 실패하면 실패 메시지를 반환합니다.
+    */
     @Operation(summary = "매니저 회원 가입")
     @PostMapping("/manager-signup")
     public ResponseEntity<String> signupManager (@RequestBody AuthDto.signUp request) {

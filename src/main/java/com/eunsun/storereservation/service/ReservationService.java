@@ -30,7 +30,14 @@ public class ReservationService {
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
 
-    // 방문 확인 - 정보가 일치하면 true
+    /*
+    방문 확인 :  키오스크로 확인하는 것이므로 권한 설정을 따로 하지 않았습니다.
+    1. 예약 ID와 고객 이름을 받아 예약 정보를 조회합니다.
+    2. 예약자 이름과 입력된 고객 이름이 일치하는지 확인합니다.
+    3. 예약 상태가 ACCEPTED인지 확인합니다.
+    4. 현재 시간이 예약 시간 10분 전부터 20분 후 사이인지 확인합니다.
+    5. 모든 조건을 만족하면 방문 확인 (visited)을 -> true 바꿔 준 후 반환합니다.
+    */
     public VisitConfirmationDto confirmVisit(Long reservationId, String customerName) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException("예약 정보를 찾을 수 없습니다. 예약 ID : " + reservationId));
@@ -68,7 +75,13 @@ public class ReservationService {
     }
 
 
-    // 예약 상태 변경 - 승인 / 거절
+    /*
+    예약 상태 변경 : 매니저 권한을 가지고 본인 가게만 가능합니다.
+    1. 예약 ID와 로그인한 매니저 ID, 변경할 예약 상태를 받습니다.
+    2. 예약 정보를 조회하고, 해당 예약의 가게가 로그인한 매니저의 가게인지 확인합니다.
+    3. 변경할 예약 상태가 ACCEPTED 또는 REJECTED 값만 작성 가능합니다.
+    4. 변경된 예약 정보를 반환합니다.
+    */
     public ReservationWithStoreDto updateReservationStatus(Long reservationId, Long loginManagerId, ReservationStatus status) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException("예약 정보를 찾을 수 없습니다. 예약 ID : " + reservationId));
@@ -89,7 +102,12 @@ public class ReservationService {
         }
     }
 
-    // 예약 조회 가능 - manager + 자기 가게 정보 예약만
+    /*
+    매니저용 예약 조회
+    1. 예약 ID와 로그인한 매니저 ID를 받습니다.
+    2. 예약 정보를 조회하고, 해당 예약의 가게가 로그인한 매니저의 가게인지 확인합니다.
+    3. 예약 정보를 반환합니다.
+    */
     public ReservationWithStoreDto getReservationDetailForManager(Long reservationId, Long loginManagerId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException("예약 정보를 찾을 수 없습니다. 예약 ID: " + reservationId));
@@ -101,7 +119,13 @@ public class ReservationService {
 
         return ReservationUtils.convertToReservationWithStoreDto(reservation);
     }
-    // 예약 조회 기능 - customer + 본인 예약만
+
+    /*
+    고객용 예약 조회
+    1. 예약 ID와 로그인한 고객 ID를 받습니다.
+    2. 예약 정보를 조회하고, 해당 예약의 고객이 로그인한 고객인지 확인합니다.
+    3. 예약 정보를 반환합니다.
+    */
     public ReservationWithStoreDto getReservationDetail(Long reservationId, Long loginCustomerId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException("예약 정보를 찾을 수 없습니다. 예약 ID : " + reservationId));
@@ -114,7 +138,12 @@ public class ReservationService {
         return ReservationUtils.convertToReservationWithStoreDto(reservation);
     }
 
-    // 예약 정보 저장
+    /*
+    예약 생성 : 반드시 로그인 된 고객 권한이 필요합니다.
+    1. 권한을 체크하고 필요한 정보들을 가져옵니다.
+    3. 예약 정보를 생성하고 저장합니다.
+    4. 생성된 예약 정보를 반환합니다.
+    */
     public ReservationCreateDto createReservation (Long loginCustomerId, ReservationCreateDto reservationCreateDto) {
         Customer customer = customerRepository.findById(loginCustomerId)
                 .orElseThrow(() -> new UserNotFoundException(loginCustomerId + "에 해당하는 사용자를 찾을 수 없습니다."));

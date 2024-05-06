@@ -21,7 +21,12 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 리뷰 삭제하기 - 리뷰 작성자, 자신의 가게 manager
+    /*
+    리뷰 삭제하기 - 매니저에 의한 삭제
+    1. 매니저 권한이 있어야 삭제가 가능합니다.
+    2. 리뷰 작성자가 아닌 매니저만 삭제할 수 있습니다.
+    */
+
     @Operation(summary = "매니저에 의한 리뷰 삭제")
     @DeleteMapping("/{reviewId}/manager")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -34,7 +39,11 @@ public class ReviewController {
         return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
     }
 
-    // 리뷰 삭제하기 - 리뷰 작성자
+    /*
+    리뷰 삭제하기 - 고객(작성자)에 의한 삭제
+    1. 고객 권한이 있어야 삭제가 가능합니다.
+    2. 리뷰 작성자 본인만 삭제할 수 있습니다.
+    */
     @Operation(summary = "고객(작성자)에 의한 리뷰 삭제")
     @DeleteMapping("/{reviewId}/customer")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
@@ -47,7 +56,11 @@ public class ReviewController {
         return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
     }
 
-    // 리뷰 수정하기 - 리뷰 작성자만 가능
+    /*
+    리뷰 수정하기
+    1. 고객 권한이 있어야 수정이 가능합니다.
+    2. 리뷰 작성자 본인만 수정할 수 있습니다.
+    */
     @Operation(summary = "리뷰 수정")
     @PutMapping("/{reviewId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
@@ -62,7 +75,11 @@ public class ReviewController {
 
 
 
-    // 리뷰 작성하기 - 방문한 고객만
+    /*
+    리뷰 작성하기 - 매장 방문 후 리뷰 작성
+    1. 고객 권한이 있어야 작성이 가능합니다.
+    2. 매장을 방문한 경우에만 리뷰를 작성할 수 있습니다.
+    */
     @Operation(summary = "매장 방문 후 리뷰 작성")
     @PostMapping("/{reservationId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")

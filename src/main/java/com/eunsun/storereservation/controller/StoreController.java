@@ -25,7 +25,11 @@ public class StoreController {
     private final StoreService storeService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 매장 상세 정보 확인
+    /*
+    매장 상세 정보 조회
+    1. 매장 ID를 받아 매장 상세 정보를 조회합니다.
+    2. 조회한 매장 상세 정보를 반환합니다.
+    */
     @Operation(summary = "매장 상세 정보 조회")
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreDetailDto> getStoreDetail(@PathVariable("storeId") Long storeId) {
@@ -35,7 +39,11 @@ public class StoreController {
         return ResponseEntity.ok(storeDetailDto);
     }
 
-    // 매장 목록 조회 - 매장 이름으로 검색
+    /*
+    매장 이름으로 검색
+    1. 검색어(keyword)를 받아 매장 이름으로 검색합니다.
+    2. 검색 결과가 있으면 리스트로 반환하고, 없으면 "검색어를 입력하세요." 메시지를 반환합니다.
+    */
     @Operation(summary = "매장 이름으로 검색")
     @GetMapping("/search/{keyword}")
     public ResponseEntity<?> searchStores(@PathVariable("keyword") String keyword) {
@@ -50,7 +58,11 @@ public class StoreController {
         return ResponseEntity.ok(storeDtos);
     }
 
-    // 매장 정보 전체 조회 - 별점 순 나열 (내림차순)
+    /*
+    높은 리뷰 별점 순으로 매장 전체 정보 조회
+    1. 매장 정보를 리뷰 별점 순(내림차순)으로 조회합니다.
+    2. 조회한 매장 정보를 리스트로 반환합니다.
+    */
     @Operation(summary = "높은 리뷰 별점 순으로 매장 전체 정보 조회")
     @GetMapping("/rating")
     public List<StoreRatingDto> getStoresOrderedByRating() {
@@ -58,7 +70,11 @@ public class StoreController {
         return storeService.getAllStoresOrderedByRating();
     }
 
-    // 매장 목록 전체 조회 - 가나다 순으로 정렬
+    /*
+    가나다순으로 매장 전체 정보 조회
+    1. 매장 정보를 가나다순으로 조회합니다.
+    2. 조회한 매장 정보를 리스트로 반환합니다.
+    */
     @Operation(summary = "가나다순으로 매장 전체 정보 조회")
     @GetMapping("/basic")
     public List<StoreDto> getStores() {
@@ -66,7 +82,13 @@ public class StoreController {
         return storeService.getAllStores();
     }
 
-    // 매장 정보 삭제
+    /*
+    매장 정보 삭제 :  반드시 매니저 권한이 필요합니다.
+    1. 매장 ID와 로그인한 매니저의 인증 정보를 받습니다.
+    2. 로그인한 매니저의 ID를 가져옵니다.
+    3. 매장 정보를 삭제합니다.
+    4. 삭제에 성공하면 성공 응답을 반환하고, 권한이 없는 경우 예외 메시지를 반환합니다.
+    */
     @Operation(summary = "매장 정보 삭제")
     @DeleteMapping("/{storeId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -83,7 +105,14 @@ public class StoreController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
-    // 매장 정보 수정
+
+    /*
+    매장 정보 수정 : 반드시 매니저 권한이 필요합니다.
+    1. 매장 ID, 수정할 매장 정보(StoreDto), 로그인한 매니저의 인증 정보를 받습니다.
+    2. 로그인한 매니저의 ID를 가져옵니다.
+    3. 매장 정보를 수정합니다.
+    4. 수정된 매장 정보를 반환하고, 권한이 없는 경우 예외 메시지를 반환합니다.
+    */
     @Operation(summary = "매장 정보 수정")
     @PutMapping("/{storeId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -103,7 +132,13 @@ public class StoreController {
     }
 
 
-    // 매장 정보 저장
+    /*
+    매장 정보 저장 : 반드시 매니저 권한이 필요합니다.
+    1. 저장할 매장 정보(StoreDto)와 로그인한 매니저의 인증 정보를 받습니다.
+    2. 로그인한 매니저의 ID를 가져옵니다.
+    3. 매장 정보를 저장합니다.
+    4. 저장된 매장 정보를 반환하고, 예외 발생 시 실패 메시지를 반환합니다.
+    */
     @Operation(summary = "매장 정보 저장")
     @PostMapping("/create")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
