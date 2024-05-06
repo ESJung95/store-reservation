@@ -37,7 +37,7 @@ public class StoreUtils {
 
         return StoreDto.builder()
                 .id(store.getId())
-                .manager(store.getManager().getId())
+                .managerId(store.getManager().getId())
                 .storeName(store.getStoreName())
                 .location(store.getLocation())
                 .description(store.getDescription())

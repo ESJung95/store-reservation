@@ -36,15 +36,11 @@ public class ReservationService {
                 .orElseThrow(() -> new ReservationNotFoundException("예약 정보를 찾을 수 없습니다. 예약 ID : " + reservationId));
 
         if (!reservation.getCustomer().getName().equals(customerName)) {
-            return VisitConfirmationDto.builder()
-                    .message("예약자 이름이 일치하지 않습니다.")
-                    .build();
+            throw new IllegalArgumentException("예약자 이름이 일치하지 않습니다. 확인 후 다시 시도해주세요.");
         }
 
         if (reservation.getStatus() != ReservationStatus.ACCEPTED) {
-            return VisitConfirmationDto.builder()
-                    .message("승인된 예약만 방문 확인이 가능합니다.")
-                    .build();
+            throw new IllegalArgumentException("승인된 예약만 방문 확인이 가능합니다.");
         }
 
         LocalDateTime reservationDateTime = LocalDateTime.of(reservation.getReservationDate(), reservation.getReservationTime());
@@ -53,16 +49,13 @@ public class ReservationService {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
         if (currentDateTime.isBefore(tenMinutesBeforeReservation)) {
-            return VisitConfirmationDto.builder()
-                    .message("예약 시간 10분 전부터 방문 확인이 가능합니다.")
-                    .build();
+            throw new IllegalArgumentException("예약 시간 10분 전부터 방문 확인이 가능합니다.");
         }
 
         if (currentDateTime.isAfter(twentyMinutesAfterReservation)) {
-            return VisitConfirmationDto.builder()
-                    .message("예약 시간으로부터 20분이 지나 예약 확인이 불가능합니다.")
-                    .build();
+            throw new IllegalArgumentException("예약 시간으로부터 20분이 지나 예약 확인이 불가능합니다.");
         }
+
         reservation.setVisited(true);
         reservationRepository.save(reservation);
 
@@ -71,7 +64,6 @@ public class ReservationService {
                 .reservationDate(reservation.getReservationDate())
                 .reservationTime(reservation.getReservationTime())
                 .numberOfPeople(reservation.getNumberOfPeople())
-                .message("방문이 확인되었습니다.")
                 .build();
     }
 

@@ -3,18 +3,21 @@ package com.eunsun.storereservation.dto;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VisitConfirmationDto {
+public class ReviewResponseDto {
+
+    private Long id;
+    private int rating;
+    private String content;
+
+    private String storeName;
 
     private String customerName;
     private LocalDate reservationDate;
-    private LocalTime reservationTime;
-    private int numberOfPeople;
+
 }

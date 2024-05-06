@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StoreDto {
 
     private Long id;
-    private Long manager;
+    private Long managerId;
     private String storeName;
     private String location;
     private String description;
