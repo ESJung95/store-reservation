@@ -6,6 +6,7 @@
 <img width="100%" src="https://github.com/ESJung95/store-reservation/assets/155522048/85b1a7d2-1907-478d-9d2e-a91c90746f73"/>
 
 ## DB설계, API설계
+## DB설계, API설계
 <a href="https://docs.google.com/spreadsheets/d/1WqCuN-a8rQgcPnOCRhzdt1_pEoKQ6rxFr-slk-FLhqI/edit?usp=sharing" target="_blank"> 전반적인 설계 </a>
 
 ## ⏱️ 주요 기능
