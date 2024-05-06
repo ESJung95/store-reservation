@@ -1,11 +1,14 @@
 package com.eunsun.storereservation.service;
 
 import com.eunsun.storereservation.domain.Manager;
+import com.eunsun.storereservation.domain.Review;
 import com.eunsun.storereservation.domain.Store;
 import com.eunsun.storereservation.dto.StoreDetailDto;
 import com.eunsun.storereservation.dto.StoreDto;
+import com.eunsun.storereservation.dto.StoreRatingDto;
 import com.eunsun.storereservation.exception.UserNotFoundException;
 import com.eunsun.storereservation.repository.ManagerRepository;
+import com.eunsun.storereservation.repository.ReviewRepository;
 import com.eunsun.storereservation.repository.StoreRepository;
 import com.eunsun.storereservation.util.StoreUtils;
 import lombok.AllArgsConstructor;
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,6 +28,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final ManagerRepository managerRepository;
+    private final ReviewRepository reviewRepository;
 
     // 매장 상세 정보
     public StoreDetailDto getStoreDetail(Long storeId) {
@@ -31,7 +37,7 @@ public class StoreService {
         return StoreUtils.convertToStoreDetailDto(store);
     }
 
-    // 매장 이름 검색
+    // 매장 이름으로 검색
     public List<StoreDto> searchStoresByName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
            return Collections.emptyList();
@@ -40,6 +46,31 @@ public class StoreService {
         List<Store> stores = storeRepository.findByStoreNameLikeIgnoreCase(searchKeyword);
         return StoreUtils.convertToDtoList(stores);
     }
+
+    // 매장 정보 전체 조회 - 거리 순 나열 (가까운 순서)
+
+    // 매장 정보 전체 저회 - 별점 순 나열 (내림차순)
+    public List<StoreRatingDto> getAllStoresOrderedByRating() {
+        List<Store> stores = storeRepository.findAll();
+        List<StoreDto> storeDtos = StoreUtils.convertToDtoList(stores);
+
+        return storeDtos.stream()
+                .map(storeDto -> {
+                    List<Review> reviews = reviewRepository.findByStoreId(storeDto.getId());
+                    double averageRating = reviews.stream()
+                            .mapToInt(Review::getRating)
+                            .average()
+                            .orElse(0.0);
+
+                    return StoreRatingDto.builder()
+                            .store(storeDto)
+                            .averageRating(averageRating)
+                            .build();
+                })
+                .sorted(Comparator.comparingDouble(StoreRatingDto::getAverageRating).reversed())
+                .collect(Collectors.toList());
+    }
+
 
     // 매장 정보 전체 조회 - 가나다순 나열
     public List<StoreDto> getAllStores() {

@@ -2,6 +2,7 @@ package com.eunsun.storereservation.controller;
 
 import com.eunsun.storereservation.dto.StoreDetailDto;
 import com.eunsun.storereservation.dto.StoreDto;
+import com.eunsun.storereservation.dto.StoreRatingDto;
 import com.eunsun.storereservation.security.JwtTokenProvider;
 import com.eunsun.storereservation.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,12 @@ public class StoreController {
         return ResponseEntity.ok(storeDtos);
     }
 
-    // 매장 목록 전체 조회 - 별점 순서로 정렬
+    // 매장 정보 전체 조회 - 별점 순 나열 (내림차순)
+    @GetMapping("/rating")
+    public List<StoreRatingDto> getStoresOrderedByRating() {
+        log.info("별점 순으로 매장 전체 정보 조회 성공");
+        return storeService.getAllStoresOrderedByRating();
+    }
 
     // 매장 목록 전체 조회 - 가나다 순으로 정렬
     @GetMapping("/basic")
